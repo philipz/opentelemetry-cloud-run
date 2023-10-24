@@ -91,15 +91,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	spanId := span.SpanContext().SpanID().String()
 	traceId := span.SpanContext().TraceID().String()
 
-	// open logging file
-	f, err := os.OpenFile("/logging/sample-app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatalf("Error opening log file: %s", err)
-	}
-	defer f.Close()
-
 	// log incoming request with spanID
-	logger := log.New(f, traceLogPrefix(traceId, spanId), log.LstdFlags)
+	logger := log.New(os.Stdout, traceLogPrefix(traceId, spanId), log.LstdFlags)
 	logger.Printf("Request: %s %s", r.Method, r.URL.Path)
 	fmt.Fprintln(w, "Logged request to /logging/sample-app.log")
 

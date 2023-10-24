@@ -18,18 +18,6 @@ receivers:
       grpc:
       http:
 
-  filelog:
-    include: [ /logging/*.log ]
-    start_at: beginning
-    operators:
-      - type: regex_parser
-        regex: '^sample-app \[(?P<trace_id>\S*)\]\[spanId: (?P<span_id>\S*)\]: .*'
-        trace:
-          trace_id:
-            parse_from: attributes.trace_id
-          span_id:
-            parse_from: attributes.span_id
-
 processors:
   batch:
     # batch metrics before sending to reduce API usage
@@ -74,10 +62,10 @@ service:
       processors: [resourcedetection, resource]
       exporters: [googlecloud]
     logs:
-      receivers: [otlp, filelog]
+      receivers: [otlp]
       processors: [resourcedetection, resource]
       exporters: [googlecloud]
     metrics:
       receivers: [otlp]
       processors: [resourcedetection, resource]
-      exporters: [googlemanagedprometheus]
+      exporters: [googlecloud]
